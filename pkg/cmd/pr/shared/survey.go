@@ -112,12 +112,6 @@ func BodySurvey(state *IssueMetadataState, templateContent, editorCommand string
 
 	if state.Body != "" && preBody != state.Body {
 		state.MarkDirty()
-	} else if state.Body == "" {
-		// When using survey.Editor, the preBody should have been appended to
-		// the temporary file.  However, if the editor isn't opened, the preBody
-		// doesn't get written and state.Body erroneously becomes empty.  This
-		// adds back the original body.
-		state.Body = preBody
 	}
 
 	return nil
