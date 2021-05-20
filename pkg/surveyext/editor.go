@@ -104,7 +104,9 @@ func (e *GhEditor) prompt(initialValue string, config *survey.PromptConfig) (int
 			break
 		}
 		if r == '\r' || r == '\n' {
-			if e.BlankAllowed {
+			if e.BlankAllowed && e.AppendDefault {
+				return e.Default, nil
+			} else if e.BlankAllowed {
 				return "", nil
 			} else {
 				continue
