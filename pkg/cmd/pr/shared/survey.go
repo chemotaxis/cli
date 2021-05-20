@@ -2,7 +2,6 @@ package shared
 
 import (
 	"fmt"
-	"os"
 	"strings"
 
 	"github.com/AlecAivazis/survey/v2"
@@ -86,85 +85,39 @@ func BodySurvey(state *IssueMetadataState, templateContent, editorCommand string
 		state.Body += templateContent
 	}
 
-	originalBody := state.Body
+	preBody := state.Body
 
-	const (
-		prBodyLabel    = "Use commit messages as body text"
-		blankBodyLabel = "Leave body text empty"
-
-		issueBodyLabel = "Skip"
-		editLabel      = "Compose in editor"
-	)
-
-	var options []string
-	switch state.Type {
-	case PRMetadata:
-		options = append(options, prBodyLabel, blankBodyLabel)
-	case IssueMetadata:
-		options = append(options, issueBodyLabel)
-	}
-
-	options = append(options,
-		editLabel,
-	)
-
-	answers := struct{ Body int }{}
-
-	bodyQuestions := []*survey.Question{
+	// TODO should just be an AskOne but ran into problems with the stubber
+	qs := []*survey.Question{
 		{
 			Name: "Body",
-			Prompt: &survey.Select{
-				Message: "Body",
-				Options: options,
+			Prompt: &surveyext.GhEditor{
+				BlankAllowed:  true,
+				EditorCommand: editorCommand,
+				Editor: &survey.Editor{
+					Message:       "Body",
+					FileName:      "*.md",
+					Default:       state.Body,
+					HideDefault:   true,
+					AppendDefault: true,
+				},
 			},
 		},
 	}
 
-	err := prompt.SurveyAsk(bodyQuestions, &answers)
+	err := prompt.SurveyAsk(qs, state)
 	if err != nil {
 		return err
 	}
 
-	switch options[answers.Body] {
-	case blankBodyLabel:
-		state.Body = ""
-	case editLabel:
-		// Creating a `surveyext.GhEditor` because we need some of the
-		// initialization done in `surveyext/editor.go`.  We don't actually call
-		// the prompt method on `survey.Editor`, so some of these fields may not
-		// be needed.
-		e := surveyext.GhEditor{
-			BlankAllowed:  true,
-			EditorCommand: editorCommand,
-			Editor: &survey.Editor{
-				Message:       "Body",
-				FileName:      "*.md",
-				Default:       originalBody,
-				HideDefault:   true,
-				AppendDefault: true,
-			},
-		}
-
-		text, err := surveyext.Edit(
-			e.EditorCommand, e.FileName, e.Default,
-			os.Stdin, os.Stdout, os.Stderr, nil)
-		if err != nil {
-			return err
-		}
-
-		// check length, return default value on empty
-		state.Body = text
-		if len(text) == 0 {
-			state.Body = e.Default
-		}
-
-		if state.Body != "" && state.Body != originalBody {
-			state.MarkDirty()
-		}
-	default:
-		// If the above cases don't match, use whatever the body text was before
-		// the BodySurvey, which can be text from a recovered issue or pull
-		// request.
+	if state.Body != "" && preBody != state.Body {
+		state.MarkDirty()
+	} else if state.Body == "" {
+		// When using survey.Editor, the preBody should have been appended to
+		// the temporary file.  However, if the editor isn't opened, the preBody
+		// doesn't get written and state.Body erroneously becomes empty.  This
+		// adds back the original body.
+		state.Body = preBody
 	}
 
 	return nil
