@@ -95,7 +95,8 @@ func (e *GhEditor) prompt(initialValue string, config *survey.PromptConfig) (int
 	defer cursor.Show()
 
 	for {
-		// EXTENDED to handle the e to edit / enter to skip behavior + SkipEditorAllowed
+		// EXTENDED to handle the e to edit / enter to skip editor and return
+		// default text or empty string
 		r, _, err := rr.ReadRune()
 		if err != nil {
 			return "", err
