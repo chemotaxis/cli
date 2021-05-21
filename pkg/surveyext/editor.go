@@ -104,13 +104,15 @@ func (e *GhEditor) prompt(initialValue string, config *survey.PromptConfig) (int
 			break
 		}
 		if r == '\r' || r == '\n' {
-			if e.BlankAllowed && e.AppendDefault {
-				return e.Default, nil
-			} else if e.BlankAllowed {
+			if e.BlankAllowed {
+				if e.AppendDefault {
+					return e.Default, nil
+				}
+
 				return "", nil
-			} else {
-				continue
 			}
+
+			continue
 		}
 		if r == terminal.KeyInterrupt {
 			return "", terminal.InterruptErr
