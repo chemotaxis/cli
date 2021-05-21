@@ -92,8 +92,8 @@ func BodySurvey(state *IssueMetadataState, templateContent, editorCommand string
 		{
 			Name: "Body",
 			Prompt: &surveyext.GhEditor{
-				BlankAllowed:  true,
-				EditorCommand: editorCommand,
+				SkipEditorAllowed: true,
+				EditorCommand:     editorCommand,
 				Editor: &survey.Editor{
 					Message:       "Body",
 					FileName:      "*.md",

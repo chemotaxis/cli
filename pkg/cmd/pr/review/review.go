@@ -246,17 +246,17 @@ func reviewSurvey(io *iostreams.IOStreams, editorCommand string) (*api.PullReque
 		Body string
 	}{}
 
-	blankAllowed := false
+	skipEditorAllowed := false
 	if reviewState == api.ReviewApprove {
-		blankAllowed = true
+		skipEditorAllowed = true
 	}
 
 	bodyQs := []*survey.Question{
 		{
 			Name: "body",
 			Prompt: &surveyext.GhEditor{
-				BlankAllowed:  blankAllowed,
-				EditorCommand: editorCommand,
+				SkipEditorAllowed: skipEditorAllowed,
+				EditorCommand:     editorCommand,
 				Editor: &survey.Editor{
 					Message:  "Review body",
 					FileName: "*.md",
