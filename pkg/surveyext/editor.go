@@ -94,6 +94,7 @@ func (e *GhEditor) prompt(initialValue string, config *survey.PromptConfig) (int
 	cursor.Hide()
 	defer cursor.Show()
 
+keyboardLoop:
 	for {
 		// EXTENDED to handle the e to edit / enter to skip editor and return
 		// default text or empty string
@@ -101,26 +102,25 @@ func (e *GhEditor) prompt(initialValue string, config *survey.PromptConfig) (int
 		if err != nil {
 			return "", err
 		}
-		if r == 'e' {
-			break
-		}
-		if r == '\r' || r == '\n' {
+
+		switch r {
+		case 'e':
+			break keyboardLoop
+		case '\r', '\n':
 			if e.SkipEditorAllowed {
+				defaultText := ""
 				if e.AppendDefault {
-					return e.Default, nil
+					defaultText = e.Default
 				}
 
-				return "", nil
+				return defaultText, nil
 			}
-
-			continue
-		}
-		if r == terminal.KeyInterrupt {
+		case terminal.KeyInterrupt:
 			return "", terminal.InterruptErr
+		case terminal.KeyEndTransmission:
+			break keyboardLoop
 		}
-		if r == terminal.KeyEndTransmission {
-			break
-		}
+
 		if string(r) == config.HelpInput && e.Help != "" {
 			err = e.Render(
 				EditorQuestionTemplate,
@@ -137,7 +137,6 @@ func (e *GhEditor) prompt(initialValue string, config *survey.PromptConfig) (int
 				return "", err
 			}
 		}
-		continue
 	}
 
 	stdio := e.Stdio()
