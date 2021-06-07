@@ -21,11 +21,11 @@ If anything feels off, or if you feel that some functionality is missing, please
 
 `gh` is available via [Homebrew][], [MacPorts][], [Conda][], and as a downloadable binary from the [releases page][].
 
-| Manager: | Install:                                 | Upgrade:                                       |
-| -------: | ---------------------------------------- | ---------------------------------------------- |
-| Homebrew | `brew install gh`                        | `brew upgrade gh`                              |
-| MacPorts | `sudo port install gh`                   | `sudo port selfupdate && sudo port upgrade gh` |
-| Conda    | `conda install gh --channel conda-forge` | `conda update gh --channel conda-forge`        |
+| Install:                                 | Upgrade:                                       |
+| ---------------------------------------- | ---------------------------------------------- |
+| `brew install gh`                        | `brew upgrade gh`                              |
+| `sudo port install gh`                   | `sudo port selfupdate && sudo port upgrade gh` |
+| `conda install gh --channel conda-forge` | `conda update gh --channel conda-forge`        |
 
 Additional Conda installation options available on the [gh-feedstock page](https://github.com/conda-forge/gh-feedstock#installing-gh).
 
@@ -39,11 +39,11 @@ For more information and distro-specific instructions, see the [Linux installati
 
 `gh` is available via [WinGet][], [scoop][], [Chocolatey][], [Conda](#macOS), and as downloadable MSI.
 
-| Manager:   | Install:            | Upgrade:            |
-| ---------: | ------------------- | --------------------|
-| WinGet     | `winget install gh` | `winget upgrade gh` |
-| scoop      | `scoop install gh`  | `scoop update gh`   |
-| Chocolatey | `choco install gh`  | `choco upgrade gh`  |
+| Install:            | Upgrade:            |
+| ------------------- | --------------------|
+| `winget install gh` | `winget upgrade gh` |
+| `scoop install gh`  | `scoop update gh`   |
+| `choco install gh`  | `choco upgrade gh`  |
 
 #### Signed MSI
 
